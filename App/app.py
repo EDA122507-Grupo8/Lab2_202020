@@ -64,7 +64,7 @@ def loadCSVFile (file, sep=";"):
         print("Hubo un error con la carga del archivo")
     t1_stop = process_time() #tiempo final
     print("Tiempo de ejecución ",t1_stop-t1_start," segundos")
-    return lst
+    return print(lst)
 
 
 def printMenu():
@@ -76,7 +76,7 @@ def printMenu():
     print("2- Contar los elementos de la Lista")
     print("3- Contar elementos filtrados por palabra clave")
     print("4- Consultar elementos a partir de dos listas")
-    print("5- algo")
+    print("5- Consultar top 10 peliculas con promedio o votos")
     print("0- Salir")
 
 def countElementsFilteredByColumn(criteria, column, lst):
@@ -112,31 +112,51 @@ def countElementsByCriteria(criteria,column,lst,lst1):
     """
     Retorna la cantidad de elementos que cumplen con un criterio para una columna dada
     """
-    dic="no hay peliculas que cumplan con este criterio"
-    if lst["size"]==0:
-        print("la lista esta vacia")
-    else:
-        pos=0
-        prev = None
-        idlst=[]
-        lstfinal=[]
-        prom=0
-        current=lst1['first']
-        while pos < lst1["size"]:
-            prev = current
-            if current["info"][column].lower()==criteria.lower():
-                idlst.append(int(current["info"]["id"]))
-            current=current["next"]
-            pos+=1
-        for ids in idlst:
-            lstfinal.append(lt.getElement(lst,ids)["original_title"])
-            prom=float(lt.getElement(lst,ids)["vote_average"])
-        dic={"lista":lstfinal,"size":len(idslst),"prom":prom/len(idlst)}
-            
-    return dic
-            
-            
-        
+    mayor_count=0
+    menor_count=100000
+    lista_retorno=[]
+    while len(lista_retorno)<10:
+        if criteria.lower=="count" and column.lower=="mayores":
+            for nodo in lst:
+                actual=nodo["info"]["vote_count"]
+                pelicula=nodo["info"]["title"]
+                if actual>mayor_count and pelicula not in lista_retorno:
+                    mayor_count=actual
+                    pelicula_def=pelicula
+            lista_retorno.append(pelicula_def)
+            mayor_count=0
+
+        if criteria.lower=="average" and column.lower=="mayores":
+            for nodo in lst:
+                actual=nodo["info"]["vote_average"]
+                pelicula=nodo["info"]["title"]
+                if actual>mayor_count and pelicula not in lista_retorno:
+                    mayor_count=actual
+                    pelicula_def=pelicula
+            lista_retorno.append(pelicula_def)
+            mayor_count=0
+
+        if criteria.lower=="count" and column.lower=="menores":
+            for nodo in lst:
+                actual=nodo["info"]["vote_count"]
+                pelicula=nodo["info"]["title"]
+                if actual<menor_count and pelicula not in lista_retorno:
+                    menor_count=actual
+                    pelicula_def=pelicula
+            lista_retorno.append(pelicula_def)
+            menor_count=100000000
+                    
+        if criteria.lower=="average" and column.lower=="menores":
+            for nodo in lst:
+                actual=nodo["info"]["vote_average"]
+                pelicula=nodo["info"]["title"]
+                if actual<menor_count and pelicula not in lista_retorno:
+                    menor_count=actual
+                    pelicula_def=pelicula
+            lista_retorno.append(pelicula_def)
+            menor_count=100000000
+
+    return print(lista_retorno)
 
 def orderElementsByCriteria(function, column, lst, elements):
     """
@@ -179,10 +199,12 @@ def main():
                     print("La lista esta vacía")
                 else:
                     criteria =input('Ingrese el criterio de búsqueda\n')
-                    lst1=loadCSVFile("Data/AllMoviesCastingRaw.csv")
-                    counter=countElementsByCriteria(criteria,"director_name",lista,lst1)
-                    print(counter)
-                    print("Coinciden ",counter["size"]," elementos con el crtierio: '",criteria ,"' ")
+                    counter=countElementsByCriteria(criteria,0,lista)
+                    print("Coinciden ",counter," elementos con el crtierio: '", criteria ,"' (en construcción ...)")
+            elif  int(inputs[0])==5:
+                 a=input("Count or average")
+                 b=input("Mayores o menores")
+                 countElementsByCriteria(a,b,lista)
 
             elif int(inputs[0])==0: #opcion 0, salir
                 sys.exit(0)
