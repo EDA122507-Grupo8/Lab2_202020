@@ -64,7 +64,7 @@ def loadCSVFile (file, sep=";"):
         print("Hubo un error con la carga del archivo")
     t1_stop = process_time() #tiempo final
     print("Tiempo de ejecución ",t1_stop-t1_start," segundos")
-    return lst
+    return print(lst)
 
 
 def printMenu():
@@ -76,6 +76,7 @@ def printMenu():
     print("2- Contar los elementos de la Lista")
     print("3- Contar elementos filtrados por palabra clave")
     print("4- Consultar elementos a partir de dos listas")
+    print("5- Consultar top 10 peliculas con promedio o votos")
     print("0- Salir")
 
 def countElementsFilteredByColumn(criteria, column, lst):
@@ -111,7 +112,51 @@ def countElementsByCriteria(criteria, column, lst):
     """
     Retorna la cantidad de elementos que cumplen con un criterio para una columna dada
     """
-    return 0
+    mayor_count=0
+    menor_count=100000
+    lista_retorno=[]
+    while len(lista_retorno)<10:
+        if criteria.lower=="count" and column.lower=="mayores":
+            for nodo in lst:
+                actual=nodo["info"]["vote_count"]
+                pelicula=nodo["info"]["title"]
+                if actual>mayor_count and pelicula not in lista_retorno:
+                    mayor_count=actual
+                    pelicula_def=pelicula
+            lista_retorno.append(pelicula_def)
+            mayor_count=0
+
+        if criteria.lower=="average" and column.lower=="mayores":
+            for nodo in lst:
+                actual=nodo["info"]["vote_average"]
+                pelicula=nodo["info"]["title"]
+                if actual>mayor_count and pelicula not in lista_retorno:
+                    mayor_count=actual
+                    pelicula_def=pelicula
+            lista_retorno.append(pelicula_def)
+            mayor_count=0
+
+        if criteria.lower=="count" and column.lower=="menores":
+            for nodo in lst:
+                actual=nodo["info"]["vote_count"]
+                pelicula=nodo["info"]["title"]
+                if actual<menor_count and pelicula not in lista_retorno:
+                    menor_count=actual
+                    pelicula_def=pelicula
+            lista_retorno.append(pelicula_def)
+            menor_count=100000000
+                    
+        if criteria.lower=="average" and column.lower=="menores":
+            for nodo in lst:
+                actual=nodo["info"]["vote_average"]
+                pelicula=nodo["info"]["title"]
+                if actual<menor_count and pelicula not in lista_retorno:
+                    menor_count=actual
+                    pelicula_def=pelicula
+            lista_retorno.append(pelicula_def)
+            menor_count=100000000
+
+    return print(lista_retorno)
 
 def orderElementsByCriteria(function, column, lst, elements):
     """
@@ -153,6 +198,11 @@ def main():
                     criteria =input('Ingrese el criterio de búsqueda\n')
                     counter=countElementsByCriteria(criteria,0,lista)
                     print("Coinciden ",counter," elementos con el crtierio: '", criteria ,"' (en construcción ...)")
+            elif  int(inputs[0])==5:
+                 a=input("Count or average")
+                 b=input("Mayores o menores")
+                 countElementsByCriteria(a,b,lista)
+
             elif int(inputs[0])==0: #opcion 0, salir
                 sys.exit(0)
                 
